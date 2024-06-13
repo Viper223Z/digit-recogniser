@@ -32,12 +32,10 @@ class DigitRecognizerApp:
 
         self.image_path = None
 
-# Odwołanie do modułu tworzącego model
     def create_model(self):
         self.progress["value"] = 0
         create_model.create_and_save_model(self.update_progress)
 
-# Pokazywanie postępu tworzenia sieci nuronowej
     def update_progress(self, value):
         self.progress["value"] = value
         if value == 100:
@@ -45,7 +43,6 @@ class DigitRecognizerApp:
         else:
             self.root.update_idletasks()
 
-# Wgrywanie obrazu przez użytkownika
     def load_image(self):
         self.image_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg *.jpeg *.png")])
         if self.image_path:
@@ -59,19 +56,19 @@ class DigitRecognizerApp:
                 self.image_path = None
                 self.predict_button.config(state=tk.DISABLED)
 
-# Przewidywanie obrazu
     def predict(self):
-        if not os.path.exists('my_model.keras'): # Wyjątek w przypadku braku wcześniejszego wygenerowania sieci
+        if not os.path.exists('my_model.keras'):
             messagebox.showerror("Error", "Model not found. Please create the neural network first.")
             return
 
-# Odwołanie do modułu przewidującego liczbę
         if self.image_path:
-            predicted_number = predict_image.load_and_predict(self.image_path)
-            self.result_label.config(text=f"Predicted Number: {predicted_number}")
+            try:
+                predicted_number = predict_image.load_and_predict(self.image_path)
+                self.result_label.config(text=f"Predicted Number: {predicted_number}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Prediction failed: {str(e)}")
         else:
             messagebox.showerror("Error", "Image not loaded")
-
 
 if __name__ == "__main__":
     root = tk.Tk()
